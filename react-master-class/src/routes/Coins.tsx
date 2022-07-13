@@ -1,8 +1,12 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Container = styled.div`
     padding : 0px 20px;
+    max-width: 480px;
+    margin: 0 auto;
 `;
 
 const Header = styled.header`
@@ -39,54 +43,61 @@ const Title = styled.h1`
     color: ${props => props.theme.accentColor};
 `;
 
-function Coins () {
+const Loader = styled.span`
+    font-size: 20px;
+    text-align : center;
+`;
 
-    const coins = [
-        {
-            id: "btc-bitcoin",
-            name: "Bitcoin",
-            symbol: "BTC",
-            rank: 1,
-            is_new: false,
-            is_active: true,
-            type: "coin",
-        },
-        {
-            id: "eth-ethereum",
-            name: "Ethereum",
-            symbol: "ETH",
-            rank: 2,
-            is_new: false,
-            is_active: true,
-            type: "coin",
-        },
-        {
-            id: "hex-hex",
-            name: "HEX",
-            symbol: "HEX",
-            rank: 3,
-            is_new: false,
-            is_active: true,
-            type: "token",
-        },
-    ]
+// Data로 들어오는 Coin들에 대한 interface (for state)
+interface CoinInterface {
+    id : string,
+    name : string,
+    symbol : string,
+    rank : number,
+    is_new : boolean,
+    is_active : boolean,
+    type : string
+}
+
+function Coins () {
+    // data로 들어오는 coin들을 위한 state 설정 (빈 배열 -> get data)
+    const [coins, setCoins] = useState<CoinInterface[]>([]); 
+
+    // loading state
+    const [loadingState, setLoadingState] = useState(true);
+    
+    // API에서 Coin들을 받아오는 getCoins
+    const getCoins = async () => {
+        // 1. get data(axios.get)
+        const res = await axios.get("https://api.coinpaprika.com/v1/coins");
+        // 2. 받아온 데이터를 coins에 추가
+        setCoins(res.data.slice(0,12));
+    }
+    
+    // Dom에 처음 올라왓을 때 1번만 getCoins를 실행하기 위해 useEffect 사용
+    useEffect(()=> {
+        getCoins();
+        // coin을 받고 나면 Loading state 변경
+        setLoadingState(false);
+    },[])
 
     return (
         <Container>
             <Header>
                 <Title>Coins</Title> 
             </Header>
-            <CoinsList>
-                {   
-                    coins.map(coin => {
-                        return (
-                            <Coin key={coin.id}>
-                                <Link to={`/${coin.id}`}>{coin.name}</Link>
-                            </Coin>
-                        )
-                    }) 
-                }
-            </CoinsList>
+            {
+               loadingState ? (<Loader>Loading...</Loader>) :  (
+                <CoinsList>
+                  {coins.map((coin) => (
+                    <Coin key={coin.id}>
+                      <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+                    </Coin>
+                  ))}
+                </CoinsList>
+              )
+            }
+            
         </Container>
     )
 }
