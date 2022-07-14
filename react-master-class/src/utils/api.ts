@@ -14,6 +14,12 @@ export async function fetchCoinData(coinId : string) {
 }
 
 export async function fetchPriceData(coinId : string) {
-    const res = await axios.get(BaseURL+`tickers/${coinId}`)
+    const res = await axios.get(BaseURL+`tickers/${coinId}`);
     return res.data;
+}
+
+export async function fetchCoinHistory(urlData : string) {
+    const res =  await axios.get(`https://ohlcv-api.nomadcoders.workers.dev?coinId=${urlData}`);
+    return res.data;
+    
 }

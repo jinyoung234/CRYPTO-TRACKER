@@ -142,12 +142,12 @@ interface CoinData {
 }
 
 interface RouteParams {
-    coinId:string;
+    coinId?:string;
 }
 
 function Coin() {
     // getCoinData url value
-    const {coinId} = useParams(); 
+    const coinId = useParams().coinId; 
     
     // state from Link state Attr
     const state = useLocation().state as RouterState;
@@ -159,6 +159,8 @@ function Coin() {
     // url match 위한 변수
     const PriceMatch = useMatch("/:coinId/price");
     const ChartMatch = useMatch("/:coinId/chart");
+    
+    // coinData가 로딩하는지 priceData가 로딩중인지 확인하기 위한 변수
     const loading = coinDataLoading || priceDataLoading;
     return (
         <Container>
@@ -203,7 +205,7 @@ function Coin() {
                             <Link to={`/${coinId}/price`}>Price</Link>
                         </Tab>
                     </Tabs>
-                    <Outlet></Outlet>
+                    <Outlet context={`${coinId}`}></Outlet>
                 </>
             )}
         </Container>

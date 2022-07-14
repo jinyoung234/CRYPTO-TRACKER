@@ -5,6 +5,7 @@ import Chart from "../routes/Chart";
 import Price from "../routes/Price";
 
 
+
 function Router() {
  return (
   <BrowserRouter>
