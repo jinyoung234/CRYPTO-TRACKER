@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useQuery } from "react-query";
 import { Link, useMatch } from "react-router-dom";
 import { Outlet, useLocation, useParams } from "react-router-dom";
@@ -62,11 +63,43 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const Header = styled.header`
-  height: 15vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const HeaderContainer = styled.div`
+    width: 100%;
+    display: flex;
+`
+
+const HeaderButton = styled.header`
+    width: 20%;
+    height: 15vh;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+`;
+
+const BackButton = styled.div`
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    width: 60%;
+    height: 46.4%;
+    border-radius: 50%;
+    a {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items:center;
+        justify-content:center;
+        text-decoration : none;
+        color:white;
+    }
+`;
+
+const HeaderTitle = styled.header`
+    width: 80%;
+    height: 15vh;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+    padding-right: 80px;
 `;
 
 const Loader = styled.span`
@@ -141,9 +174,6 @@ interface CoinData {
     last_data_at: string;
 }
 
-interface RouteParams {
-    coinId?:string;
-}
 
 function Coin() {
     // getCoinData url value
@@ -154,7 +184,10 @@ function Coin() {
     
     // use react-quary 
     const {isLoading:coinDataLoading, data:coinData} = useQuery<CoinData>(["coinInfo", coinId], () => fetchCoinData(coinId!));
-    const {isLoading:priceDataLoading, data:priceData} = useQuery<CoinPriceData>(["priceInfo", coinId], () => fetchPriceData(coinId!));
+    const {isLoading:priceDataLoading, data:priceData} 
+    = useQuery<CoinPriceData>(["priceInfo", coinId], () => fetchPriceData(coinId!), {
+        refetchInterval: 500,
+    });
 
     // url match 위한 변수
     const PriceMatch = useMatch("/:coinId/price");
@@ -163,13 +196,24 @@ function Coin() {
     // coinData가 로딩하는지 priceData가 로딩중인지 확인하기 위한 변수
     const loading = coinDataLoading || priceDataLoading;
     return (
-        <Container>
-          <Header>
-            <Title>
-                {state?.name ? state.name : loading ? "Loading..." : coinData?.name}
-            </Title>
-          </Header> 
-          {loading ? (
+        <>
+            <Helmet>
+                {loading ?<title>loading</title> : <title>{coinId}</title> }
+            </Helmet>
+            <Container>
+                <HeaderContainer>
+                    <HeaderButton>
+                        <BackButton>
+                            <Link to={`/`}>&larr;</Link>
+                        </BackButton>
+                    </HeaderButton>
+                    <HeaderTitle>
+                        <Title>
+                            {state?.name ? state.name : loading ? "Loading..." : coinData?.name}
+                        </Title>
+                    </HeaderTitle> 
+                </HeaderContainer>
+            {loading ? (
             <Loader>Loading...</Loader>) : (
                 <>
                     <Overview>
@@ -182,8 +226,8 @@ function Coin() {
                             <span>${coinData?.symbol}</span>
                         </OverviewItem>
                         <OverviewItem>
-                            <span>Open Source:</span>
-                            <span>{coinData?.open_source ? "Yes" : "No"}</span>
+                            <span>Price</span>
+                            <span>{priceData?.quotes.USD.price.toFixed(1)}</span>
                         </OverviewItem>
                     </Overview>
                     <Description>{coinData?.description}</Description>
@@ -199,16 +243,17 @@ function Coin() {
                     </Overview>
                     <Tabs>
                         <Tab isActive={ChartMatch !== null}>
-                            <Link to={`/${coinId}/chart`}>Chart</Link>
+                            <Link to={`/${coinId}/history`}>History Chart</Link>
                         </Tab>
                         <Tab isActive={PriceMatch !== null}>
-                            <Link to={`/${coinId}/price`}>Price</Link>
+                            <Link to={`/${coinId}/price`}>Price Chart</Link>
                         </Tab>
                     </Tabs>
                     <Outlet context={`${coinId}`}></Outlet>
                 </>
             )}
         </Container>
+        </>
     )
 }
 

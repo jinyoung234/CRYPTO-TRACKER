@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import {fetchCoins} from "../utils/api";
+import { Helmet } from "react-helmet-async";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -76,9 +77,13 @@ function Coins () {
     const { isLoading, data } = useQuery<CoinInterface[]>("allCoins", fetchCoins);
 
     return (
+      <>
+        <Helmet>
+          {isLoading ?<title>isLoading...</title>: <title>JCoin</title> } 
+        </Helmet>
         <Container>
           <Header>
-            <Title>코인</Title>
+            <Title>JCoin</Title>
           </Header>
           {isLoading ? (
             <Loader>Loading...</Loader>
@@ -94,7 +99,8 @@ function Coins () {
               ))}
             </CoinsList>
           )}
-        </Container>
+        </Container> 
+      </>
       );
 }
 export default Coins;

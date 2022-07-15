@@ -19,7 +19,9 @@ export async function fetchPriceData(coinId : string) {
 }
 
 export async function fetchCoinHistory(urlData : string) {
-    const res =  await axios.get(`https://ohlcv-api.nomadcoders.workers.dev?coinId=${urlData}`);
+    const endDate = Math.floor(Date.now() / 1000);
+    const startDate = endDate - 60 * 60 * 24;
+    const res =  await axios.get(BaseURL+`coins/${urlData}/ohlcv/historical?start=${startDate}&end=${endDate}`);
     return res.data;
     
 }
