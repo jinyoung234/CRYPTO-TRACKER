@@ -3,6 +3,18 @@ import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import {fetchCoins} from "../utils/api";
 import { Helmet } from "react-helmet-async";
+import { isDarkAtom } from "../utils/atom";
+import { useSetRecoilState } from "recoil";
+
+const ChangeModeButton = styled.button`
+  width: 20%;
+  height: 5vh;
+  background-color: rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 0px solid white;
+  border-radius: 10px;
+  margin-bottom : 5%;
+`;
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -17,8 +29,9 @@ const Header = styled.header`
 `;
 const CoinsList = styled.ul``;
 const Coin = styled.li`
-  background-color: white;
+  background-color: ${props => props.theme.contentColor};
   color: ${(props) => props.theme.bgColor};
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
   border-radius: 15px;
   margin-bottom: 10px;
   a {
@@ -27,7 +40,7 @@ const Coin = styled.li`
     padding: 20px;
     transition: color 0.2s ease-in;
     text-decoration:none;
-    color: ${(props) => props.theme.bgColor};
+    color: ${(props) => props.theme.textColor};
 
   }
   p {
@@ -75,7 +88,11 @@ function Coins () {
     // first argument : queryKey
     // second argument : fetcher function
     const { isLoading, data } = useQuery<CoinInterface[]>("allCoins", fetchCoins);
-
+    
+    // 상태를 변경 할 atom을 hook을 통해 설정
+    const setDarkAtom = useSetRecoilState(isDarkAtom);
+    
+    const modifyMode = () => setDarkAtom((prev) => !prev);
     return (
       <>
         <Helmet>
@@ -97,8 +114,10 @@ function Coins () {
                   </Link>
                 </Coin>
               ))}
+              <ChangeModeButton onClick={modifyMode}>Change mode</ChangeModeButton>
             </CoinsList>
           )}
+          
         </Container> 
       </>
       );

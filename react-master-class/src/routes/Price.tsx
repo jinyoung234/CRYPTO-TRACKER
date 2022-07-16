@@ -2,8 +2,10 @@ import ApexChart from "react-apexcharts";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "react-query";
 import { useOutletContext } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import { fetchPriceData } from "../utils/api";
-import { Theme } from "../utils/theme";
+import { isDarkAtom } from "../utils/atom";
+import { whiteTheme, darkTheme } from "../utils/theme";
 
 interface CoinPriceData {
     id : string;
@@ -40,13 +42,15 @@ interface CoinPriceData {
 }
 
 function Price () {
-
     // urlData 가져오기
     const urlData = useOutletContext<string>();
 
     // priceData useQuery로 가져오기
     const {isLoading, data} 
     = useQuery<CoinPriceData>(["priceInfo", urlData], () => fetchPriceData(urlData!));
+
+    const isDark = useRecoilValue(isDarkAtom);
+    
     return (
         <>
             <Helmet>
@@ -57,7 +61,7 @@ function Price () {
                 
                 options={{
                     theme: {
-                        mode:"dark",
+                        mode: isDark ? "dark" : "light",
                     },
                     chart:{
                         height: 400,
@@ -71,10 +75,10 @@ function Price () {
                     fill:{
                         type:"gradient",
                         gradient: {
-                            gradientToColors: [Theme.accentColor],
+                            gradientToColors: [darkTheme.accentColor],
                             stops: [0,100]
                         },
-                        colors: [Theme.bgColor],
+                        colors: [darkTheme.bgColor],
                     }, 
                     xaxis: {
                         type:'category',

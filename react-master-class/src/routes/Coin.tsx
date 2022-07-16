@@ -2,8 +2,10 @@ import { Helmet } from "react-helmet-async";
 import { useQuery } from "react-query";
 import { Link, useMatch } from "react-router-dom";
 import { Outlet, useLocation, useParams } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { fetchCoinData, fetchPriceData } from "../utils/api";
+import { isDarkAtom } from "../utils/atom";
 
 const Tabs = styled.div`
   display: grid;
@@ -20,7 +22,8 @@ const Tab = styled.span<{isActive:boolean}>`
     text-transform: uppercase;
     font-size: 12px;
     font-weight: 400;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: ${(props) => props.theme.contentColor };
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
     padding: 7px 0px;
     border-radius: 10px;
     a {
@@ -37,7 +40,7 @@ const Tab = styled.span<{isActive:boolean}>`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.contentColor };
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -77,7 +80,7 @@ const HeaderButton = styled.header`
 `;
 
 const BackButton = styled.div`
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: ${(props) => props.theme.contentColor};
     box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
     width: 60%;
     height: 46.4%;
@@ -89,7 +92,7 @@ const BackButton = styled.div`
         align-items:center;
         justify-content:center;
         text-decoration : none;
-        color:white;
+        color: ${(props) => props.theme.textColor };
     }
 `;
 

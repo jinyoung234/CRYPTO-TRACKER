@@ -2,7 +2,9 @@ import ApexChart from "react-apexcharts";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "react-query";
 import { useOutletContext } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import { fetchCoinHistory } from "../utils/api";
+import { isDarkAtom } from "../utils/atom";
 
 
 
@@ -22,6 +24,8 @@ function History () {
     const {isLoading, data} = useQuery<chartInfo[]>(["chartData", urlData], () => fetchCoinHistory(urlData), {
         refetchInterval: 5000,
     });
+
+    const isDark = useRecoilValue(isDarkAtom);
     return (
         <>
             <Helmet>
@@ -46,7 +50,7 @@ function History () {
                       ]} 
                       options={{
                         theme: {
-                          mode: "dark",
+                          mode: isDark ? "dark" : "light",
                         },
                         chart: {
                           type: "candlestick",

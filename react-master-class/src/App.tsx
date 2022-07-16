@@ -1,7 +1,16 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import Router from './utils/Router';
-import {ReactQueryDevtools} from 'react-query/devtools';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { HelmetProvider } from 'react-helmet-async';
+import { darkTheme, whiteTheme } from './utils/theme'
+import { isDarkAtom } from './utils/atom';
+import { useRecoilValue } from 'recoil';
+
+
+// Create a client
+const queryClient = new QueryClient();
+
 
 // Reset CSS (모든 기본적 스타일을 reset 위해)
 // createGlobalStyle을 통해 해당 스타일의 컴포넌트를 전역으로 사용
@@ -62,14 +71,19 @@ const GlobalStyle = createGlobalStyle`
     color:${props => props.theme.textColor};
   }
 `
-
 function App() {
+  const isDark = useRecoilValue(isDarkAtom);
   return (
-      <HelmetProvider>
-        <GlobalStyle/>
-        <Router/>
-        <ReactQueryDevtools initialIsOpen={true}/>
-      </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={isDark ? darkTheme : whiteTheme}>
+        <HelmetProvider>
+          <GlobalStyle/>
+          <Router/>
+        </HelmetProvider>
+        <ReactQueryDevtools initialIsOpen panelProps={{style:{height:250}}}/>
+      </ThemeProvider>
+    </QueryClientProvider>
+
   );
 }
 
