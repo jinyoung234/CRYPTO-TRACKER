@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/ReactMasterClass/static/js/main.5b8f909f.js",
-    "index.html": "/ReactMasterClass/index.html",
-    "main.5b8f909f.js.map": "/ReactMasterClass/static/js/main.5b8f909f.js.map"
+    "main.js": "/CRYPTO-TRACKER/static/js/main.95d88304.js",
+    "index.html": "/CRYPTO-TRACKER/index.html",
+    "main.95d88304.js.map": "/CRYPTO-TRACKER/static/js/main.95d88304.js.map"
   },
   "entrypoints": [
-    "static/js/main.5b8f909f.js"
+    "static/js/main.95d88304.js"
   ]
 }
